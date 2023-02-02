@@ -154,14 +154,6 @@ fn rdFromKbrd(sekwencja: &str) -> String {
     wynik.push_str("\nMasa: ");
     wynik.push_str(&calculate_mass(&sekwencja_3).to_string());
     wynik
-
-    // wynik.push_str(&kodon_extract(&sekwencja));
-    // wynik.push_str("\nMasa: ");
-    // wynik.push_str("\nPrzsunięcie 2: ");
-    // wynik.push_str(&kodon_extract(&sekwencja[1..]));
-    // wynik.push_str("\nPrzsunięcie 3: ");
-    // wynik.push_str(&kodon_extract(&sekwencja[2..]));
-    // wynik
 }
 
 fn main() {
