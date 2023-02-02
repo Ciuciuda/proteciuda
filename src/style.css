@@ -5,7 +5,9 @@
     --dark-semi-transparent-bg: rgba(81, 81, 81, .29);
     --white: #fafafa;
 }
-
+html{
+    background-color: var(--dark-gray);
+}
 * {
     margin: 0;
     padding: 0;
