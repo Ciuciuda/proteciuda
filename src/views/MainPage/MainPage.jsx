@@ -5,6 +5,7 @@ import dnaCover from "./../../assets/MainPage/dna-cover.png"
 import dnaText from "./../../assets/MainPage/text.png"
 import Modal from "./../../components/Modal"
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 const MainPage = () => {
   const [modalState, setModalState] = useState(false);
@@ -22,7 +23,7 @@ const MainPage = () => {
         <textarea name="user-input" className='user-input' placeholder='some text'></textarea>
         <div className="user-input__button__wrapper">
           <button className="main-page__button" onClick={() => setModalState(false)}>Wyjście</button>
-          <button className="main-page__button --light">Wczytaj</button>
+          <Link to="/results" className="main-page__button --light">Wczytaj</Link>
         </div>
       </Modal>
     </div>

@@ -55,6 +55,8 @@
     transition: .3s;
     background: none;
     color: var(--white);
+    display: grid;
+    place-items: center;
 }
 
 .main-page__button:hover {
@@ -88,6 +90,7 @@
 .main-page__text{
     transition: opacity .2s ease;
 }
+
 .user-input__button__wrapper{
     display: flex;
     justify-content: center;

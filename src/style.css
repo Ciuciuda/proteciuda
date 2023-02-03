@@ -5,14 +5,18 @@
     --dark-semi-transparent-bg: rgba(81, 81, 81, .29);
     --white: #fafafa;
 }
+
 html{
     background-color: var(--dark-gray);
 }
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Kumbh Sans', Arial, sans-serif;
+    user-select: none;
+    -webkit-user-drag: none;
 }
 
 a {
