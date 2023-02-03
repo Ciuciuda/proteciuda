@@ -1,14 +1,18 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import "./MainPage.css"
 import dnaImage from "./../../assets/MainPage/dna.png"
 import dnaCover from "./../../assets/MainPage/dna-cover.png"
 import dnaText from "./../../assets/MainPage/text.png"
 import Modal from "./../../components/Modal"
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-const MainPage = () => {
+const MainPage = ({ setSequence }) => {
   const [modalState, setModalState] = useState(false);
+  const seqInput = useRef(null);
+  function handleSequenceSend() {
+    setSequence(seqInput.current.value);
+  }
+
   return (
     <div className={`main-page`}>
       <img src={dnaImage} alt="" className={`main-page__bg --blurred ${modalState ? '--vanished': ''}`} />
@@ -20,10 +24,10 @@ const MainPage = () => {
         <button className="main-page__button --light">Wgraj Plik</button>
       </div>
       <Modal visible={modalState}>
-        <textarea name="user-input" className='user-input' placeholder='some text'></textarea>
+        <textarea ref={seqInput} name="user-input" className='user-input' placeholder='some text'></textarea>
         <div className="user-input__button__wrapper">
           <button className="main-page__button" onClick={() => setModalState(false)}>Wyjście</button>
-          <Link to="/results" className="main-page__button --light">Wczytaj</Link>
+          <Link to="/results" className="main-page__button --light" onClick={handleSequenceSend}>Wczytaj</Link>
         </div>
       </Modal>
     </div>

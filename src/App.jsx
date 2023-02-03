@@ -6,15 +6,12 @@ import { BrowserRouter, Routes, Route, } from "react-router-dom";
 import "./App.css";
 
 function App() {
-  async function greet() {
-    const response = await invoke("rdFromKbrd", { sekwencja: name }); 
-  }
-
+  const [sequence, setSequence] = useState(null);
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<MainPage/>}/>
-        <Route path="/results" element={<Results/>}/>
+        <Route path="/" element={<MainPage setSequence={setSequence}/>}/>
+        <Route path="/results" element={<Results sequence={sequence}/>}/>
       </Routes>
     </BrowserRouter>
   );

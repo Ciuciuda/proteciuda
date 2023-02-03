@@ -154,6 +154,7 @@
 }
 
 .results__window {
+    color: #fff;
     height: calc(90% - 50px);
     width: calc(90% - 220px);
     position: absolute;

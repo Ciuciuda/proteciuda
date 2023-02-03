@@ -50,6 +50,7 @@ fn calculate_mass(protein: &str) -> f64 {
         }
         println!("{}", mass);
     }
+    mass -= (protein.len() - 1) as f64 * 18.02;
     mass
 }
 fn amino_encoder(kodony: &Vec<&str>) -> String {
@@ -141,15 +142,15 @@ fn rdFromKbrd(sekwencja: &str) -> String {
     let sekwencja_3 = kodon_extract(&sekwencja[2..].to_uppercase());
     println!("{}", sekwencja_3);
 
-    let mut wynik = String::from("Przsunięcie 1: ");
+    let mut wynik = String::from("Przsunięcie 1: \n");
     wynik.push_str(&sekwencja_1);
     wynik.push_str("\nMasa: ");
     wynik.push_str(&calculate_mass(&sekwencja_1).to_string());
-    wynik.push_str("\nPrzsunięcie 2: ");
+    wynik.push_str("\nPrzsunięcie 2: \n");
     wynik.push_str(&sekwencja_2);
     wynik.push_str("\nMasa: ");
     wynik.push_str(&calculate_mass(&sekwencja_2).to_string());
-    wynik.push_str("\nPrzsunięcie 3: ");
+    wynik.push_str("\nPrzsunięcie 3: \n");
     wynik.push_str(&sekwencja_3);
     wynik.push_str("\nMasa: ");
     wynik.push_str(&calculate_mass(&sekwencja_3).to_string());

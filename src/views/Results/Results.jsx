@@ -1,9 +1,29 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { invoke } from '@tauri-apps/api'
 import "./Results.css"
 import searchOutline from "./../../assets/Results/search-outline.svg"
 import dnaImage from "./../../assets/MainPage/dna.png"
 
-const Results = () => {
+/*
+interface IPorotein: {
+  mass: str,
+  isoelectricPoint: number,
+  pHIndex: number,
+  hydrophilicity: number
+}
+*/
+const Results = ({ sequence }) => {
+  const [currentShift, setCurrentShift] = useState(0);
+  const [currentProtein, setCurrentProtein] = useState(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await invoke("rdFromKbrd", {sekwencja: sequence});
+      console.log(data)
+      setCurrentProtein(data);
+    }
+    fetchData();
+  }, [currentShift]);
+
   return (
     <div className='results'>
       <img className='results__bg' src={dnaImage} alt="" />
@@ -41,7 +61,9 @@ const Results = () => {
         </div>
       </div>
       <div className="results__window">
-        {/* results */}
+        <p>
+          {currentProtein}
+        </p>
       </div>
     </div>
   )
