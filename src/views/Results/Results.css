@@ -166,3 +166,61 @@
     border-radius: 40px;
     padding: 30px 40px;
 }
+
+.results__shift {
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+}
+
+.results__shift__btn,
+.results__shift__currentShift {
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    border: 2px solid white;
+    border-radius: 20px;
+    display: grid;
+    place-items: center;
+    background: none;
+    color: white;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.results__shift__btn {
+    width: 64px;
+    cursor: pointer;
+    transition: box-shadow .2s ease-in;
+}
+
+.results__shift__btn:not(.--blocked):hover {
+    box-shadow: 0 0 6px white;
+}
+
+.results__shift__btn.--blocked {
+    border-color: #5d5d5dd5;
+    color: #5d5d5dd5;
+    cursor: default;
+}
+
+.results__shift__currentShift {
+    width: 192px;
+    background: white;
+    color: #1d1d1d;
+    position: relative;
+}
+
+.results__shift__currentShift::before {
+    position: absolute;
+    content: "Przesunięcie";
+    top: -100%;
+    color: white;
+    font-weight: 500;
+    letter-spacing: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+}

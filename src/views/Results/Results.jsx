@@ -13,6 +13,7 @@ interface IPorotein: {
 }
 */
 const Results = ({ sequence }) => {
+  const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
   const [currentShift, setCurrentShift] = useState(0);
   const [currentProtein, setCurrentProtein] = useState(null);
   useEffect(() => {
@@ -59,6 +60,11 @@ const Results = ({ sequence }) => {
             <label><input type="radio" name='results'/><span>20.</span></label>
           </div>
         </div>
+      </div>
+      <div className="results__shift">
+        <button onClick={() => {setCurrentShift(clamp(currentShift - 1, -2, 2))}} className={"results__shift__btn" + (currentShift == -2 ? " --blocked" : "")}>{currentShift - 1 >= 0 ? "+" : ""}{currentShift - 1}</button>
+        <p className="results__shift__currentShift">{currentShift >= 0 ? "+" : ""}{currentShift}</p>
+        <button onClick={() => {setCurrentShift(clamp(currentShift + 1, -2, 2))}} className={"results__shift__btn" + (currentShift == 2 ? " --blocked" : "")}>{currentShift + 1 >= 0 ? "+" : ""}{currentShift + 1}</button>
       </div>
       <div className="results__window">
         <p>
