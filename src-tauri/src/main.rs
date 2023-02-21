@@ -3,6 +3,16 @@
     windows_subsystem = "windows"
 )]
 
+use serde::{Deserialize, Serialize};
+use serde_json::{json, Result};
+
+#[derive(Serialize, Deserialize)]
+struct Przesuniecie {
+    bialka: String,
+    waga: String,
+    punkt_ie: String,
+}
+
 fn kodon_extract(sekwencja: &str) -> String {
     sekwencja.replace("T", "U");
     let mut kodony: Vec<&str> = Vec::new();
@@ -135,6 +145,8 @@ fn rdFromKbrd(sekwencja: &str) -> String {
     if sekwencja.len() < 3 {
         return String::from("Za krótka sekwencja");
     }
+    let mut wektor: Vec<Przesuniecie> = Vec::new();
+
     let sekwencja_1 = kodon_extract(&sekwencja.to_uppercase());
     println!("{}", sekwencja_1);
     let sekwencja_2 = kodon_extract(&sekwencja[1..].to_uppercase());
@@ -142,19 +154,40 @@ fn rdFromKbrd(sekwencja: &str) -> String {
     let sekwencja_3 = kodon_extract(&sekwencja[2..].to_uppercase());
     println!("{}", sekwencja_3);
 
-    let mut wynik = String::from("Przsunięcie 1: \n");
-    wynik.push_str(&sekwencja_1);
-    wynik.push_str("\nMasa: ");
-    wynik.push_str(&calculate_mass(&sekwencja_1).to_string());
-    wynik.push_str("\nPrzsunięcie 2: \n");
-    wynik.push_str(&sekwencja_2);
-    wynik.push_str("\nMasa: ");
-    wynik.push_str(&calculate_mass(&sekwencja_2).to_string());
-    wynik.push_str("\nPrzsunięcie 3: \n");
-    wynik.push_str(&sekwencja_3);
-    wynik.push_str("\nMasa: ");
-    wynik.push_str(&calculate_mass(&sekwencja_3).to_string());
-    wynik
+    wektor.push(Przesuniecie {
+        bialka: sekwencja_1.clone(),
+        waga: calculate_mass(&sekwencja_1).to_string(),
+        punkt_ie: String::from(""),
+    });
+    wektor.push(Przesuniecie {
+        bialka: sekwencja_2.clone(),
+        waga: calculate_mass(&sekwencja_2).to_string(),
+        punkt_ie: String::from(""),
+    });
+    wektor.push(Przesuniecie {
+        bialka: sekwencja_3.clone(),
+        waga: calculate_mass(&sekwencja_3).to_string(),
+        punkt_ie: String::from(""),
+    });
+
+    let json = serde_json::to_string(&wektor).unwrap_or_default();
+
+    json
+    // println!("{:?}", json);
+    // let mut wynik = String::from("Przsunięcie 1: \n");
+    // wynik.push_str(&sekwencja_1);
+    // wynik.push_str("\nMasa: ");
+    // wynik.push_str(&calculate_mass(&sekwencja_1).to_string());
+    // wynik.push_str("\nPrzsunięcie 2: \n");
+    // wynik.push_str(&sekwencja_2);
+    // wynik.push_str("\nMasa: ");
+    // wynik.push_str(&calculate_mass(&sekwencja_2).to_string());
+    // wynik.push_str("\nPrzsunięcie 3: \n");
+    // wynik.push_str(&sekwencja_3);
+    // wynik.push_str("\nMasa: ");
+    // wynik.push_str(&calculate_mass(&sekwencja_3).to_string());
+
+    // wynik
 }
 
 fn main() {
