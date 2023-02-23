@@ -15,12 +15,11 @@ interface IPorotein: {
 const Results = ({ sequence }) => {
   const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
   const [currentShift, setCurrentShift] = useState(0);
-  const [currentProtein, setCurrentProtein] = useState(null);
+  const [currentProtein, setCurrentProtein] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       const data = await invoke("rdFromKbrd", {sekwencja: sequence});
-      console.log(data)
-      setCurrentProtein(data);
+      setCurrentProtein(JSON.parse(data));
     }
     fetchData();
   }, [currentShift]);
@@ -68,7 +67,7 @@ const Results = ({ sequence }) => {
       </div>
       <div className="results__window">
         <p>
-          {currentProtein}
+
         </p>
       </div>
     </div>
