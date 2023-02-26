@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { invoke } from '@tauri-apps/api'
 import "./Results.css"
 import searchOutline from "./../../assets/Results/search-outline.svg"
+import eyeOutline from "./../../assets/Results/eye-outline.svg"
+import downloadOutline from "./../../assets/Results/download-outline.svg"
 import dnaImage from "./../../assets/MainPage/dna.png"
 
 /*
@@ -14,7 +16,7 @@ interface IPorotein: {
 */
 const Results = ({ sequence }) => {
   const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
-  const [currentShift, setCurrentShift] = useState(0);
+  const [currentShift, setCurrentShift] = useState(1);
   const [currentProtein, setCurrentProtein] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
@@ -24,6 +26,7 @@ const Results = ({ sequence }) => {
     fetchData();
   }, [currentShift]);
 
+  
   return (
     <div className='results'>
       <img className='results__bg' src={dnaImage} alt="" />
@@ -61,14 +64,39 @@ const Results = ({ sequence }) => {
         </div>
       </div>
       <div className="results__shift">
-        <button onClick={() => {setCurrentShift(clamp(currentShift - 1, -2, 2))}} className={"results__shift__btn" + (currentShift == -2 ? " --blocked" : "")}>{currentShift - 1 >= 0 ? "+" : ""}{currentShift - 1}</button>
+        <button onClick={() => {setCurrentShift(currentShift == 1 ? -1 : clamp(currentShift - 1, -3, 3))}} className={"results__shift__btn" + (currentShift == -3 ? " --blocked" : "")}>{currentShift - 1 > 0 ? "+" : ""}{currentShift == 1 ? -1 : currentShift - 1}</button>
         <p className="results__shift__currentShift">{currentShift >= 0 ? "+" : ""}{currentShift}</p>
-        <button onClick={() => {setCurrentShift(clamp(currentShift + 1, -2, 2))}} className={"results__shift__btn" + (currentShift == 2 ? " --blocked" : "")}>{currentShift + 1 >= 0 ? "+" : ""}{currentShift + 1}</button>
+        <button onClick={() => {setCurrentShift(currentShift == -1 ? 1 : clamp(currentShift + 1, -3, 3))}} className={"results__shift__btn" + (currentShift == 3 ? " --blocked" : "")}>{currentShift + 1 >= 0 ? "+" : ""}{currentShift == -1 ? 1 : currentShift + 1}</button>
       </div>
       <div className="results__window">
-        <p>
-
-        </p>
+        <div className="results__window__header">
+          <h2>Sekwencja kodu białka</h2>
+          <p>KWTKICSLHSLPQS ...</p>
+          <div>
+            <button><img src={eyeOutline} alt="" /></button>
+            <button><img src={downloadOutline} alt="" /></button>
+          </div>
+        </div>
+        <div className="results__window__box">
+          <div className="results__window__left">
+            <div>
+              <div className="results__window__box__mass">
+                <h2>Masa</h2>
+                <p>testtesttest * 10^-2137</p>
+              </div>
+              <div className="results__window__box__mass">
+                <h2>Masa</h2>
+                <p>testtesttest * 10^-2137</p>
+              </div>
+              <div className="results__window__box__mass">
+                <h2>Masa</h2>
+                <p>testtesttest * 10^-2137</p>
+              </div>
+            </div>
+            <button className='results__window__btn'>Zobacz Wykresy I Diagramy</button>
+          </div>
+          
+        </div>
       </div>
     </div>
   )
