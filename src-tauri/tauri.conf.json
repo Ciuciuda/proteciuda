@@ -12,6 +12,9 @@
   },
   "tauri": {
     "allowlist": {
+      "fs": {
+        "all": true
+      },
       "all": false,
       "shell": {
         "all": false,
@@ -63,10 +66,12 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
+        "height": 700,
         "resizable": true,
         "title": "proteciuda",
-        "width": 800
+        "width": 900,
+        "minHeight": 700,
+        "minWidth": 900
       }
     ]
   }

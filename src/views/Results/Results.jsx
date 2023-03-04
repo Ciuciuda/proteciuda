@@ -20,6 +20,7 @@ const Results = ({ sequence }) => {
   const [currentShift, setCurrentShift] = useState(1);
   const [currentProtein, setCurrentProtein] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [searchValue, setSearchValue] = useState("");
   useEffect(() => {
     const fetchData = async () => {
       const data = await invoke("rdFromKbrd", {sekwencja: sequence});
@@ -34,19 +35,25 @@ const Results = ({ sequence }) => {
   // console.log(currentIndex)
 
   const buttons = []
-  for (let i = 0; i < currentProtein.length; i++)
-    buttons.push(i)
+  for (let i = 0; i < currentProtein.length; i++) {
+    if (searchValue == "") {
+      buttons.push(i)
+    } else if (String(i).includes(String((parseInt(searchValue) - 1)))) {
+      buttons.push(i)
+    }
+  } 
 
   const setIndex = () => {
     setCurrentIndex(parseInt(document.querySelector('input[name="results"]:checked').value) - 1)
   }
-  
+
+  console.log("text")
   return (
     <div className='results'>
       <img className='results__bg' src={dnaImage} alt="" />
       <div className='results__sidebar'>
         <div className='results__searchbar'>
-          <input type="text" className='results__searchInput' placeholder='Szukaj' id=""/>
+          <input type="number" value={searchValue} onChange={e => setSearchValue(e.target.value)} className='results__searchInput' placeholder='Szukaj' id=""/>
           <button className='results__searchBtn'>
             <img className='results__loupe' src={searchOutline} alt="" />
           </button>
@@ -54,8 +61,13 @@ const Results = ({ sequence }) => {
         <p className='results__title'>Białka</p>
         <div className='results__menu-line'>
           <div id='results__menu'>
-            {buttons.map((el, index) => {
-              return <label><input type="radio" name='results' onClick={setIndex} value={el + 1}/><span>{el + 1}.</span></label>
+            // TODO: fix checked
+            {buttons.map(el => {
+              console.log(el == currentIndex)
+              if (el == currentIndex)
+                return <label><input type="radio" name='results' defaultChecked onClick={setIndex} value={el + 1}/><span>{el + 1}.</span></label>
+              else
+                return <label><input type="radio" name='results' onClick={setIndex} value={el + 1}/><span>{el + 1}.</span></label>
             })}
           </div>
         </div>
@@ -75,22 +87,21 @@ const Results = ({ sequence }) => {
           </div>
         </div>
         <div className="results__window__box">
-          <div className="results__window__left">
-            <div>
-              <div className="results__window__box__mass">
-                <h2>Masa</h2>
-                <p>{Object(currentProtein[currentIndex]).waga}</p>
-              </div>
+          <div>
+            <div className="results__window__box__mass">
+              <h2>Masa</h2>
+              <p>{Object(currentProtein[currentIndex]).waga}</p>
             </div>
-            <button className='results__window__btn'>Zobacz Wykresy I Diagramy</button>
           </div>
-          <div className="results__window__right" id='protein'>
+          <div className="results__proteinbox">
             {
-              (currentProtein.length>0) ?
+              // TODO: fix render protein
+              (currentProtein.length > 0) ?
               <Protein formula={currentProtein[currentIndex]['bialka']}/>
-              : 'Loading...'
+              : <p>Loading...</p>
             }
           </div>
+          <button className='results__window__btn'>Zobacz Wykresy I Diagramy</button>
         </div>
       </div>
     </div>

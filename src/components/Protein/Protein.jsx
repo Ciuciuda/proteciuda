@@ -14,6 +14,8 @@ const Protein = props => {
     const bond_length = 45
     const bond_width = 2
     const font = "600 15px Arial"
+    const color = "white"
+    canvas.height = 520
     /* ===================== Settings ===================== */
     
     const amino_acids = {
@@ -258,10 +260,6 @@ const Protein = props => {
         canvas.width = width
     }
 
-    function setHeight(height) {
-        canvas.height = height
-    }
-
     function draw_amino_acid(formula, starting_pos, node_type, reversed = false) {    
         function extract_molecule(i, lookup) {
             let mol = ""
@@ -282,10 +280,12 @@ const Protein = props => {
                 previous_pos[1] + Math.sin(current_angle) * bond_length
             ]
 
-            ctx.strokeStyle = "black"
+            ctx.strokeStyle = color
             ctx.lineWidth = bond_width
 
             if (type == "single") {
+                if (debug)
+                    ctx.strokeStyle = "black"
                 ctx.beginPath()
                 ctx.moveTo(previous_pos[0], previous_pos[1])
                 ctx.lineTo(next_pos[0], next_pos[1])
@@ -370,9 +370,10 @@ const Protein = props => {
                     }
             } else if (type == "circle") {
                 ctx.beginPath()
-                ctx.fillStyle = "white"
+                ctx.fillStyle = "#2c2c2c"
                 ctx.ellipse(previous_pos[0], previous_pos[1], bond_length / 4, bond_length / 4, 0, 0, 2 * Math.PI)
                 ctx.fill()
+                ctx.fillStyle = color
                 ctx.stroke()
                 ctx.lineWidth = bond_width * 1.25
                 ctx.beginPath()
@@ -524,7 +525,7 @@ const Protein = props => {
 
     let current_position = [30, 240]
     setWidth(60 + ((formula.length - 1) * 3 * single_width) + amino_acids[formula[formula.length - 1]]["width"] * single_width)
-    setHeight(520)
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
     // ctx.fillStyle = "red"
     // ctx.fillRect(0, 0, canvas.width, canvas.height)
     formula.forEach((el, index) => {
@@ -540,12 +541,12 @@ const Protein = props => {
         ctx.clearRect(el[0] - (el[2] / 2) - 1, el[1] - 7, el[2] + 2, 13)
         ctx.font = font
         ctx.textAlign = "center"
-        ctx.fillStyle = "black"
+        ctx.fillStyle = color
         ctx.fillText(el[3], el[0], el[1] + (bond_length / 10))
     })
   }, [])
   
-  return <canvas ref={canvasRef} {...props}/>
+  return <canvas ref={canvasRef} id="proteinator" {...props}/>
 }
 
 export default Protein
