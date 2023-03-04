@@ -123,6 +123,7 @@
 #results__menu label {
     position: relative;
     width: 100%;
+    cursor: pointer;
 }
 
 #results__menu label::before {
@@ -304,4 +305,9 @@
 
 .results__window__btn:hover {
     box-shadow: 0 0 6px white;
+}
+
+.results__window__right {
+    grid-column: 2;
+    overflow: auto;
 }

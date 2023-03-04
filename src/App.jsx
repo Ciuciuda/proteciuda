@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route, } from "react-router-dom";
 import "./App.css";
 
 function App() {
-  const [sequence, setSequence] = useState(null);
+  const [sequence, setSequence] = useState("");
   return (
     <BrowserRouter>
       <Routes>
