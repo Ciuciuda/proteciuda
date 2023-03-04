@@ -1,16 +1,14 @@
 
 import React, { useRef, useEffect } from 'react'
 
-const Canvas = props => {
+const Protein = props => {
   const canvasRef = useRef(null)
-
   useEffect(() => {
 
     const formula = String(props.formula).split("")
-    
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
-    
+    const debug = false;
 
     /* ===================== Settings ===================== */
     const bond_length = 45
@@ -550,4 +548,4 @@ const Canvas = props => {
   return <canvas ref={canvasRef} {...props}/>
 }
 
-export default Canvas
+export default Protein

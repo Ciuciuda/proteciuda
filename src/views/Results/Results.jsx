@@ -23,8 +23,10 @@ const Results = ({ sequence }) => {
   useEffect(() => {
     const fetchData = async () => {
       const data = await invoke("rdFromKbrd", {sekwencja: sequence});
+      console.log(data)
       setCurrentProtein(JSON.parse(data));
     }
+    console.log(currentProtein)
     fetchData();
   }, [currentShift]);
 
@@ -83,7 +85,11 @@ const Results = ({ sequence }) => {
             <button className='results__window__btn'>Zobacz Wykresy I Diagramy</button>
           </div>
           <div className="results__window__right" id='protein'>
-            <Protein formula={Object(currentProtein[currentIndex]).bialka}/>
+            {
+              (currentProtein.length>0) ?
+              <Protein formula={currentProtein[currentIndex]['bialka']}/>
+              : 'Loading...'
+            }
           </div>
         </div>
       </div>
