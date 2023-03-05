@@ -1,24 +1,24 @@
-
-import React, { useRef, useEffect } from 'react'
-
-const Protein = props => {
-  const canvasRef = useRef(null)
-  useEffect(() => {
-
-    const formula = String(props.formula).split("")
-    const canvas = canvasRef.current
+async function Protein(formula, debug = false) {
+    formula = String(formula).split("")
+    let canvas = document.querySelector("canvas")
+    if (canvas == null)
+        return;
     const ctx = canvas.getContext('2d')
-    const debug = false;
+    // const debug = false;
 
     /* ===================== Settings ===================== */
-    const bond_length = 45
+    const bond_length = 50
     const bond_width = 2
     const font = "600 15px Arial"
     const color = "white"
     canvas.height = 520
     /* ===================== Settings ===================== */
+
+    // const getAmoniAcids = () => {
+    //     return 
+    // }
     
-    const amino_acids = {
+    const amino_acids = await {
         "G": {
             "structure": 
                 "(NH₃)+S--SR--D'O'B++S[O]"
@@ -253,8 +253,17 @@ const Protein = props => {
         }
     }
 
-    const single_width = bond_length * Math.pow(3, 0.5) / 2
-    const clearZones = []
+    // removing not allowed characters
+    for (let i = 0; i < formula.length; i++)
+        if (!Object.keys(amino_acids).includes(formula[i])) {
+            console.log(`An unexpected "${formula.splice(i, 1)}" sign was found in protein!`)
+            i--
+        }
+    console.log(formula)
+
+    const single_width = bond_length * Math.pow(3, 0.5) / 2;
+    const clearZones = [];
+    let hydrobond;
 
     function setWidth(width) {
         canvas.width = width
@@ -274,7 +283,7 @@ const Protein = props => {
         }
     
         function draw_bond(previous_pos, current_angle, type) {
-            const freq = 8;
+            const freq = (hydrobond ? 30 : 8);
             let next_pos = [
                 previous_pos[0] + Math.cos(current_angle) * bond_length,
                 previous_pos[1] + Math.sin(current_angle) * bond_length
@@ -529,6 +538,7 @@ const Protein = props => {
     // ctx.fillStyle = "red"
     // ctx.fillRect(0, 0, canvas.width, canvas.height)
     formula.forEach((el, index) => {
+        hydrobond = (index % 2 == 0 ? false : true)
         if (index == 0) {
             current_position = draw_amino_acid(amino_acids[el]["structure"], current_position, "start")
         } else if (index == formula.length - 1) {
@@ -544,9 +554,6 @@ const Protein = props => {
         ctx.fillStyle = color
         ctx.fillText(el[3], el[0], el[1] + (bond_length / 10))
     })
-  }, [])
-  
-  return <canvas ref={canvasRef} id="proteinator" {...props}/>
 }
 
 export default Protein

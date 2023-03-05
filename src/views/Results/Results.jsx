@@ -5,7 +5,9 @@ import searchOutline from "./../../assets/Results/search-outline.svg"
 import eyeOutline from "./../../assets/Results/eye-outline.svg"
 import downloadOutline from "./../../assets/Results/download-outline.svg"
 import dnaImage from "./../../assets/MainPage/dna.png"
-import Protein from '../../components/Protein/Protein'
+// import Protein from '../../components/Protein/OldProtein'
+import draw_peptide from '../../components/Protein/Protein'
+import Modal from '../../components/Modal'
 
 /*
 interface IPorotein: {
@@ -21,6 +23,7 @@ const Results = ({ sequence }) => {
   const [currentProtein, setCurrentProtein] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [searchValue, setSearchValue] = useState("");
+  const [modalState, setModalState] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       const data = await invoke("rdFromKbrd", {sekwencja: sequence});
@@ -36,18 +39,21 @@ const Results = ({ sequence }) => {
 
   const buttons = []
   for (let i = 0; i < currentProtein.length; i++) {
-    if (searchValue == "") {
-      buttons.push(i)
-    } else if (String(i).includes(String((parseInt(searchValue) - 1)))) {
-      buttons.push(i)
-    }
+    // if (searchValue == "") {
+    //   buttons.push(i)
+    // } else if (String(i).includes(String((parseInt(searchValue) - 1)))) {
+    //   buttons.push(i)
+    // }
+    buttons.push(i)
   } 
 
   const setIndex = () => {
     setCurrentIndex(parseInt(document.querySelector('input[name="results"]:checked').value) - 1)
   }
 
-  console.log("text")
+  if (currentProtein.length > 0)
+    draw_peptide(currentProtein[currentIndex]['bialka'])
+
   return (
     <div className='results'>
       <img className='results__bg' src={dnaImage} alt="" />
@@ -61,13 +67,8 @@ const Results = ({ sequence }) => {
         <p className='results__title'>Białka</p>
         <div className='results__menu-line'>
           <div id='results__menu'>
-            // TODO: fix checked
             {buttons.map(el => {
-              console.log(el == currentIndex)
-              if (el == currentIndex)
-                return <label><input type="radio" name='results' defaultChecked onClick={setIndex} value={el + 1}/><span>{el + 1}.</span></label>
-              else
-                return <label><input type="radio" name='results' onClick={setIndex} value={el + 1}/><span>{el + 1}.</span></label>
+              return <label className={!String(el).includes(String((parseInt(searchValue) - 1))) && searchValue != "" ? "d-none" : ""}><input type="radio" name='results' onClick={setIndex} value={el + 1}/><span>{el + 1}.</span></label>
             })}
           </div>
         </div>
@@ -82,7 +83,7 @@ const Results = ({ sequence }) => {
           <h2>Sekwencja kodu białka</h2>
           <p>{String(Object(currentProtein[currentIndex]).bialka).slice(0, 14)} ...</p>
           <div>
-            <button><img src={eyeOutline} alt="" /></button>
+            <button onClick={() => {setModalState(true)}}><img src={eyeOutline} alt="" /></button>
             <button><img src={downloadOutline} alt="" /></button>
           </div>
         </div>
@@ -97,13 +98,25 @@ const Results = ({ sequence }) => {
             {
               // TODO: fix render protein
               (currentProtein.length > 0) ?
-              <Protein formula={currentProtein[currentIndex]['bialka']}/>
+              // <Protein formula={currentProtein[currentIndex]['bialka']}/>
+              <canvas id='proteinator'></canvas>
               : <p>Loading...</p>
             }
           </div>
           <button className='results__window__btn'>Zobacz Wykresy I Diagramy</button>
         </div>
       </div>
+      <Modal visible={modalState}>
+        <div className="results__protein-text-box">
+          <div className="results__protein-text-box__border">
+            <p className="results__protein-text-box__textbox">{
+              (currentProtein[currentIndex] != null ? currentProtein[currentIndex]['bialka'] : "`1")
+            }</p>
+          </div>
+
+          <button className='main-page__button' onClick={() => {setModalState(false)}}>Wyjdź</button>
+        </div>
+      </Modal>
     </div>
   )
 }
