@@ -3,11 +3,12 @@ import { invoke } from '@tauri-apps/api'
 import "./Results.css"
 import searchOutline from "./../../assets/Results/search-outline.svg"
 import eyeOutline from "./../../assets/Results/eye-outline.svg"
-import downloadOutline from "./../../assets/Results/download-outline.svg"
+import chevronBack from "./../../assets/Results/chevron-back-outline.svg"
 import dnaImage from "./../../assets/MainPage/dna.png"
 // import Protein from '../../components/Protein/OldProtein'
 import draw_peptide from '../../components/Protein/Protein'
 import Modal from '../../components/Modal'
+import { Link } from 'react-router-dom'
 
 /*
 interface IPorotein: {
@@ -61,6 +62,9 @@ const Results = ({ sequence }) => {
             <img className='results__loupe' src={searchOutline} alt="" />
           </button>
         </div>
+        <Link to="/" className="results__back">
+          <img src={chevronBack} alt="" />
+        </Link>
         <p className='results__title'>Białka</p>
         <div className='results__menu-line'>
           <div id='results__menu'>
@@ -69,7 +73,7 @@ const Results = ({ sequence }) => {
               return (
                 <label 
                   className={!String(index).includes(String((parseInt(searchValue) - 1))) && searchValue != "" ? "d-none" : ""}
-                  key={index}  
+                  key={index}
                 >
                   
                   <input 
@@ -103,7 +107,7 @@ const Results = ({ sequence }) => {
           <div>
             <div className="results__window__box__mass">
               <h2>Masa</h2>
-              <p>{currentProtein.waga}</p>
+              <p>{parseFloat(currentProtein.waga).toFixed(5)}</p>
             </div>
           </div>
           <div className="results__proteinbox">
@@ -139,6 +143,9 @@ const Results = ({ sequence }) => {
           <img className='results__loupe' src={searchOutline} alt="" />
         </button>
       </div>
+      <Link to="/" className="results__back">
+          <img src={chevronBack} alt="" />
+        </Link>
       <p className='results__title'>Białka</p>
       <div className='results__menu-line'>
 
