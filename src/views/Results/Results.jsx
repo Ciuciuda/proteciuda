@@ -17,44 +17,41 @@ interface IPorotein: {
   hydrophilicity: number
 }
 */
+
 const Results = ({ sequence }) => {
-  const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
   const [currentShift, setCurrentShift] = useState(1);
-  const [currentProtein, setCurrentProtein] = useState([]);
+  const [currentProtein, setCurrentProtein] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [searchValue, setSearchValue] = useState("");
-  const [modalState, setModalState] = useState(false);
+
+  const [proteinCount, setProteinCount] = useState(0);
+
+  const translateShift = (currentShift) => {
+    if (currentShift>0)
+      return currentShift - 1;
+    return Math.abs(currentShift) + 2; 
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       const data = await invoke("rdFromKbrd", {sekwencja: sequence});
-      console.log(data)
-      setCurrentProtein(JSON.parse(data));
+      const parsedData = JSON.parse(data); 
+      setProteinCount(parsedData[translateShift(currentShift)].length);
+      setCurrentProtein(parsedData[translateShift(currentShift)][currentIndex]);
     }
-    console.log(currentProtein)
     fetchData();
-  }, [currentShift]);
+  }, [currentShift, currentIndex]);
+  
+  const [searchValue, setSearchValue] = useState("");
+  const [modalState, setModalState] = useState(false);
 
-  // console.log(sequence, currentProtein)
-  // console.log(currentIndex)
+  const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
 
-  const buttons = []
-  for (let i = 0; i < currentProtein.length; i++) {
-    // if (searchValue == "") {
-    //   buttons.push(i)
-    // } else if (String(i).includes(String((parseInt(searchValue) - 1)))) {
-    //   buttons.push(i)
-    // }
-    buttons.push(i)
-  } 
-
-  const setIndex = () => {
-    setCurrentIndex(parseInt(document.querySelector('input[name="results"]:checked').value) - 1)
-  }
-
-  if (currentProtein.length > 0)
-    draw_peptide(currentProtein[currentIndex]['bialka'])
-
-  return (
+  useEffect(() => {
+    if (currentProtein)
+      draw_peptide(currentProtein.bialko);
+  }, [currentProtein]);
+  
+  return (currentProtein) ?(
     <div className='results'>
       <img className='results__bg' src={dnaImage} alt="" />
       <div className='results__sidebar'>
@@ -67,8 +64,24 @@ const Results = ({ sequence }) => {
         <p className='results__title'>Białka</p>
         <div className='results__menu-line'>
           <div id='results__menu'>
-            {buttons.map(el => {
-              return <label className={!String(el).includes(String((parseInt(searchValue) - 1))) && searchValue != "" ? "d-none" : ""}><input type="radio" name='results' onClick={setIndex} value={el + 1}/><span>{el + 1}.</span></label>
+            {
+              [...Array(proteinCount)].map((el, index) => {
+              return (
+                <label 
+                  className={!String(index).includes(String((parseInt(searchValue) - 1))) && searchValue != "" ? "d-none" : ""}
+                  key={index}  
+                >
+                  
+                  <input 
+                    type="radio" 
+                    name='results'
+                    onClick={() => setCurrentIndex(index)}
+                    value={index}
+                    checked={index==currentIndex ? true : false}
+                  />
+                  <span>{index + 1}.</span>
+                </label>
+                );
             })}
           </div>
         </div>
@@ -81,23 +94,21 @@ const Results = ({ sequence }) => {
       <div className="results__window">
         <div className="results__window__header">
           <h2>Sekwencja kodu białka</h2>
-          <p>{String(Object(currentProtein[currentIndex]).bialka).slice(0, 14)} ...</p>
+          <p>{currentProtein.bialko.slice(0, 14)} ...</p>
           <div>
             <button onClick={() => {setModalState(true)}}><img src={eyeOutline} alt="" /></button>
-            <button><img src={downloadOutline} alt="" /></button>
           </div>
         </div>
         <div className="results__window__box">
           <div>
             <div className="results__window__box__mass">
               <h2>Masa</h2>
-              <p>{Object(currentProtein[currentIndex]).waga}</p>
+              <p>{currentProtein.waga}</p>
             </div>
           </div>
           <div className="results__proteinbox">
             {
-              // TODO: fix render protein
-              (currentProtein.length > 0) ?
+              (currentProtein) ?
               // <Protein formula={currentProtein[currentIndex]['bialka']}/>
               <canvas id='proteinator'></canvas>
               : <p>Loading...</p>
@@ -110,7 +121,7 @@ const Results = ({ sequence }) => {
         <div className="results__protein-text-box">
           <div className="results__protein-text-box__border">
             <p className="results__protein-text-box__textbox">{
-              (currentProtein[currentIndex] != null ? currentProtein[currentIndex]['bialka'] : "`1")
+              (currentProtein.bialko)
             }</p>
           </div>
 
@@ -118,7 +129,34 @@ const Results = ({ sequence }) => {
         </div>
       </Modal>
     </div>
-  )
+  ): (
+    <div className='results'>
+    <img className='results__bg' src={dnaImage} alt="" />
+    <div className='results__sidebar'>
+      <div className='results__searchbar'>
+        <input type="number" value={searchValue} className='results__searchInput' placeholder='Szukaj' id=""/>
+        <button className='results__searchBtn'>
+          <img className='results__loupe' src={searchOutline} alt="" />
+        </button>
+      </div>
+      <p className='results__title'>Białka</p>
+      <div className='results__menu-line'>
+
+      </div>
+    </div>
+    <div className="results__shift">
+      <button onClick={() => {setCurrentShift(currentShift == 1 ? -1 : clamp(currentShift - 1, -3, 3))}} className={"results__shift__btn" + (currentShift == -3 ? " --blocked" : "")}>{currentShift - 1 > 0 ? "+" : ""}{currentShift == 1 ? -1 : currentShift - 1}</button>
+      <p className="results__shift__currentShift">{currentShift >= 0 ? "+" : ""}{currentShift}</p>
+      <button onClick={() => {setCurrentShift(currentShift == -1 ? 1 : clamp(currentShift + 1, -3, 3))}} className={"results__shift__btn" + (currentShift == 3 ? " --blocked" : "")}>{currentShift + 1 >= 0 ? "+" : ""}{currentShift == -1 ? 1 : currentShift + 1}</button>
+    </div>
+    <div className="results__window" style={{
+      display: 'grid',
+      placeItems: 'center'
+    }}>
+      <h2 style={{fontSize: '3em'}}>Brak białek dla tego przesunięcia</h2>
+    </div>
+  </div>
+  );
 }
 
 export default Results

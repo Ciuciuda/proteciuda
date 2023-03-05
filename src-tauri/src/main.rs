@@ -7,8 +7,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Result};
 
 #[derive(Serialize, Deserialize)]
-struct Przesuniecie {
-    bialka: String,
+struct Bialko {
+    bialko: String,
     waga: String,
     punkt_ie: String,
 }
@@ -26,12 +26,11 @@ fn kodon_extract(sekwencja: &str) -> String {
         i += 3;
     }
 
-    println!("{:?}", kodony);
+    // println!("{:?}", kodony);
     amino_encoder(&kodony)
 }
 fn calculate_mass(protein: &str) -> f64 {
     let mut mass = 0.0;
-    println!("{}", protein);
     for acid in protein.chars() {
         match acid {
             'A' => mass += 89.09,
@@ -58,7 +57,6 @@ fn calculate_mass(protein: &str) -> f64 {
             // 'U' => mass += 168.06,
             _ => mass += 0.0,
         }
-        println!("{}", mass);
     }
     mass -= (protein.len() - 1) as f64 * 18.02;
     mass
@@ -111,12 +109,12 @@ fn amino_encoder(kodony: &Vec<&str>) -> String {
                 },
                 Some('C') => wynik.push('S'),
                 Some('A') => match &temp.nth(0) {
-                    Some('A' | 'G') => wynik.push_str(""),
+                    Some('A' | 'G') => wynik.push_str("#"),
                     Some('U' | 'C') => wynik.push('Y'),
                     _ => wynik.push('X'),
                 },
                 Some('G') => match &temp.nth(0) {
-                    Some('A') => wynik.push_str(""),
+                    Some('A') => wynik.push_str("#"),
                     Some('G') => wynik.push('W'),
                     Some('U' | 'C') => wynik.push('C'),
                     _ => wynik.push('X'),
@@ -140,35 +138,87 @@ fn amino_encoder(kodony: &Vec<&str>) -> String {
     wynik
 }
 
+fn find_proteins(seq: &str) -> Vec<&str> {
+    let mut response = Vec::new();
+    let mut i = 0;
+    while i < seq.len() {
+        if seq.as_bytes()[i] == b'M' {
+            let mut j = i;
+            while j < seq.len() {
+                if seq.as_bytes()[j] == b'#' {
+                    response.push(&seq[i..j]);
+                    i = j;
+                    break;
+                }
+                j += 1;
+            }
+        }
+        i += 1;
+    }
+    response
+}
+
 #[tauri::command]
 fn rdFromKbrd(sekwencja: &str) -> String {
     if sekwencja.len() < 3 {
         return String::from("Za krótka sekwencja");
     }
-    let mut wektor: Vec<Przesuniecie> = Vec::new();
-
-    let sekwencja_1 = kodon_extract(&sekwencja.to_uppercase());
-    println!("{}", sekwencja_1);
-    let sekwencja_2 = kodon_extract(&sekwencja[1..].to_uppercase());
-    println!("{}", sekwencja_2);
-    let sekwencja_3 = kodon_extract(&sekwencja[2..].to_uppercase());
-    println!("{}", sekwencja_3);
-
-    wektor.push(Przesuniecie {
-        bialka: sekwencja_1.clone(),
-        waga: calculate_mass(&sekwencja_1).to_string(),
-        punkt_ie: String::from(""),
-    });
-    wektor.push(Przesuniecie {
-        bialka: sekwencja_2.clone(),
-        waga: calculate_mass(&sekwencja_2).to_string(),
-        punkt_ie: String::from(""),
-    });
-    wektor.push(Przesuniecie {
-        bialka: sekwencja_3.clone(),
-        waga: calculate_mass(&sekwencja_3).to_string(),
-        punkt_ie: String::from(""),
-    });
+    let mut wektor: Vec<Vec<Bialko>> = Vec::new();
+    for i in 0..3{
+        let _sekwencja = kodon_extract(&sekwencja[i..].to_uppercase());
+        let _bialka= find_proteins(&_sekwencja);
+        let mut helper: Vec<Bialko> = Vec::new();
+        for b in _bialka {
+            helper.push(Bialko {
+                    bialko: b.to_string(),
+                    waga: calculate_mass(b).to_string(),
+                    punkt_ie: String::from(""),
+            });
+        }
+        wektor.push(helper);
+    }
+    for i in 0..3{
+        let r_sekwencja = &sekwencja.chars().rev().collect::<String>();
+        let _sekwencja = kodon_extract(&r_sekwencja[i..].to_uppercase());
+        let _bialka= find_proteins(&_sekwencja);
+        let mut helper: Vec<Bialko> = Vec::new();
+        for b in _bialka {
+            helper.push(Bialko {
+                    bialko: b.to_string(),
+                    waga: calculate_mass(b).to_string(),
+                    punkt_ie: String::from(""),
+            });
+        }
+        wektor.push(helper);
+    }
+    // wektor.push(Przesuniecie {
+    //     bialka: bialka_1.iter().map(|&s|s.into()).collect(),
+    //     dlugosc: bialka_1.len(),
+    //     waga: bialka_1.into_iter().map(|s| calculate_mass(s).to_string()).collect(),
+    //     punkt_ie: String::from(""),
+    // });
+    // wektor.push(Przesuniecie {
+    //     bialka: bialka_2.iter().map(|&s|s.into()).collect(),
+    //     dlugosc: bialka_2.len(),
+    //     waga: bialka_2.into_iter().map(|s| calculate_mass(s).to_string()).collect(),
+    //     punkt_ie: String::from(""),
+    // });
+    // wektor.push(Przesuniecie {
+    //     bialka: bialka_3.iter().map(|&s|s.into()).collect(),
+    //     dlugosc: bialka_3.len(),
+    //     waga: bialka_3.into_iter().map(|s| calculate_mass(s).to_string()).collect(),
+    //     punkt_ie: String::from(""),
+    // });
+    // wektor.push(Przesuniecie {
+    //     bialka: sekwencja_2.clone(),
+    //     waga: calculate_mass(&sekwencja_2).to_string(),
+    //     punkt_ie: String::from(""),
+    // });
+    // wektor.push(Przesuniecie {
+    //     bialka: sekwencja_3.clone(),
+    //     waga: calculate_mass(&sekwencja_3).to_string(),
+    //     punkt_ie: String::from(""),
+    // });
 
     let json = serde_json::to_string(&wektor).unwrap_or_default();
 
